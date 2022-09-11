@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<! -- I don't know what this "code" means, I am not a "HTML programmer" -->
+<! -- I have NO idea what this "code" means, I am not a "HTML programmer" -->
 <html lang="en">
 <head>
     <title>MYSITE.COM</title>
@@ -19,11 +19,11 @@
 <script>
     async function send(){
 
-        // Getting the name and the age we got
+        // Getting the entered name and age
         const username = document.getElementById("username").value;
         const userage = document.getElementById("userage").value;
 
-        // Requesting
+        // Sending request
         const response = await fetch("/hello", {
                 method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
