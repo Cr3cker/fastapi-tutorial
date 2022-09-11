@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<! -- I don't know what this "code" means, I am not a "HTML programmer" -->
+<html lang="en">
+<head>
+    <title>MYSITE.COM</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div id="message"></div>
+     <p>
+        Enter your name: <br />
+        <input name="username" id="username" />
+    </p>
+     <p>
+        Enter your age: <br />
+        <input name="userage" id="userage" type="number" />
+    </p>
+    <button onclick="send()">Send</button>
+<script>
+    async function send(){
+
+        // Getting the name and the age we got
+        const username = document.getElementById("username").value;
+        const userage = document.getElementById("userage").value;
+
+        // Requesting
+        const response = await fetch("/hello", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: username,
+                    age: userage
+                })
+            });
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById("message").textContent = data.message;
+            }
+            else
+                console.log(response);
+    }
+</script>
+</body>
+</html>
