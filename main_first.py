@@ -4,11 +4,12 @@
 # to process its refactoring of any type.
 
 
-from fastapi import FastAPI, Response, Path, Query, status
+from fastapi import FastAPI, Response, Path, Query, status, Header, Cookie
 from fastapi.responses import JSONResponse, HTMLResponse, PlainTextResponse, RedirectResponse, FileResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
 from typing import Union
+from datetime import datetime
 
 app = FastAPI()
 
@@ -215,5 +216,50 @@ def old():
 # Constructor of StaticFiles is StaticFiles(directory=None, packages=None, html=False, check_dir=True)
 app.mount("/static", StaticFiles(directory="public", html=True))
 
+
+# This example shows how to send and get headers (you can see this header included in developers tools in your browser)
+@app.get("/")
+def root():
+    data = "Hello MYSITE.COM"
+    return Response(content=data, media_type="text/plain", headers={"Secret-Code": "123459"})
+
+
+# Another way of doing the same thing is to use the headers attribute
+@app.get("/")
+def root(response: Response):
+    response.headers["Secret-Code"] = "123459"
+    return {"message": "Hello MYSITE.COM"}
+
+
+# Getting headers (here we can use fastapi.Headers class), defining a default value for user_agent
+@app.get("/")
+def header(user_agent: Union[str, None] = Header()):
+    return {"User-Agent": user_agent}
+
+
+# This example shows hot to work with cookies on the server
+@app.get("/")
+def cookie(response: Response):
+    now = str(datetime.now())
+    response.set_cookie(key="last_visit", value=now)
+    return {"message": "Cookies were set"}
+
+
+# You can do the same thing using Response object
+@app.get("/")
+def response():
+    now = str(datetime.now())
+    response = JSONResponse(content={"message": "Cookies were set"})
+    response.set_cookie(key="last_visit", value=now)
+    return response
+
+
+# To get cookies on the server you can use the following
+@app.get("/")
+def cookies(last_visit: Union[str, None] = Cookie(default=None)):
+    if last_visit is None:
+        return {"message": "This is your first visit to this site"}
+    else:
+        return {"message": f"Your last visit to this site {last_visit}"}
 
 
